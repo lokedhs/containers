@@ -34,6 +34,7 @@ access pop an element from an empty sequence."))
     (= head tail)))
 
 (defun make-queue ()
+  "Create a new instance of a queue."
   (make-instance 'queue))
 
 (defgeneric queue-push (queue element)
@@ -76,12 +77,17 @@ access pop an element from an empty sequence."))
                   :reader blocking-seq/cond-variable))
   (:documentation "Sequence that supports blocking on empty queues"))
 
-(defgeneric queue-pop-wait (seq))
+(defgeneric queue-pop-wait (queue)
+  (:documentation "Attempts to pop one element off QUEUE. If the queue
+is empty, wait until an element is added."))
 
 (defclass blocking-queue (queue blocking-seq)
-  ())
+  ()
+  (:documentation "A thread-safe version of QUEUE that allows waiting
+for elements to be added to it."))
 
 (defun make-blocking-queue ()
+  "Create a new instance of a blocking queue."
   (make-instance 'blocking-queue))
 
 (defmethod seq-empty-p ((queue blocking-queue))
@@ -99,7 +105,7 @@ access pop an element from an empty sequence."))
   (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
     (call-next-method)))
 
-(defmethod queue-pop-wait ((queue blocking-queue))
+(defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
   (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
     (loop
        while (seq-empty-p queue)
