@@ -105,7 +105,7 @@ for elements to be added to it."))
   (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
     (call-next-method)))
 
-(defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
+(defmethod queue-pop-wait ((queue blocking-queue))
   (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
     (loop
        while (seq-empty-p queue)
