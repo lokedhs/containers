@@ -6,4 +6,8 @@
            #:sequence-empty
            #:queue-pop
            #:queue-pop-wait
-           #:make-blocking-queue))
+           #:make-blocking-queue
+           #:atomic/value
+           #:make-atomic-variable
+           #:atomic-variable
+           #:with-atomic-variable))

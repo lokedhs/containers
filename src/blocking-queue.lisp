@@ -68,20 +68,20 @@ access pop an element from an empty sequence."))
           (setq head (mod (1+ head) (array-dimension content 0)))
           result))))
 
-(defclass blocking-seq ()
+(defclass lockable-instance ()
   ((lock          :type t
                   :initform (bordeaux-threads:make-lock)
-                  :reader blocking-seq/lock)
+                  :reader lockable-instance/lock)
    (cond-variable :type t
                   :initform (bordeaux-threads:make-condition-variable)
-                  :reader blocking-seq/cond-variable))
+                  :reader lockable-instance/cond-variable))
   (:documentation "Sequence that supports blocking on empty queues"))
 
 (defgeneric queue-pop-wait (queue)
   (:documentation "Attempts to pop one element off QUEUE. If the queue
 is empty, wait until an element is added."))
 
-(defclass blocking-queue (queue blocking-seq)
+(defclass blocking-queue (queue lockable-instance)
   ()
   (:documentation "A thread-safe version of QUEUE that allows waiting
 for elements to be added to it."))
@@ -91,23 +91,23 @@ for elements to be added to it."))
   (make-instance 'blocking-queue))
 
 (defmethod seq-empty-p ((queue blocking-queue))
-  (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
+  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
     (call-next-method)))
 
 (defmethod queue-push ((queue blocking-queue) element)
-  (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
+  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
     (let ((result (call-next-method)))
-      (bordeaux-threads:condition-notify (blocking-seq/cond-variable queue))
+      (bordeaux-threads:condition-notify (lockable-instance/cond-variable queue))
       result)))
 
 (defmethod queue-pop ((queue blocking-queue) &rest rest)
   (declare (ignore rest))
-  (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
+  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
     (call-next-method)))
 
 (defmethod queue-pop-wait ((queue blocking-queue))
-  (bordeaux-threads:with-recursive-lock-held ((blocking-seq/lock queue))
+  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
     (loop
        while (seq-empty-p queue)
-       do (bordeaux-threads:condition-wait (blocking-seq/cond-variable queue) (blocking-seq/lock queue)))
+       do (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)))
     (queue-pop queue)))

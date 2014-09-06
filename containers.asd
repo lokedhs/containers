@@ -8,4 +8,5 @@
     :components ((:module src
                           :serial t
                           :components ((:file "package")
-                                       (:file "blocking-queue")))))
+                                       (:file "blocking-queue")
+                                       (:file "atomic")))))
