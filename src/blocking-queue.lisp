@@ -68,19 +68,6 @@ access pop an element from an empty sequence."))
           (setq head (mod (1+ head) (array-dimension content 0)))
           result))))
 
-(defclass lockable-instance ()
-  ((lock          :type t
-                  :initform (bordeaux-threads:make-lock)
-                  :reader lockable-instance/lock)
-   (cond-variable :type t
-                  :initform (bordeaux-threads:make-condition-variable)
-                  :reader lockable-instance/cond-variable))
-  (:documentation "Sequence that supports blocking on empty queues"))
-
-(defmethod initialize-instance :after ((obj lockable-instance) &key lockable-instance-name)
-  (setf (slot-value obj 'lock) (bordeaux-threads:make-lock lockable-instance-name))
-  (setf (slot-value obj 'cond-variable) (bordeaux-threads:make-condition-variable :name lockable-instance-name)))
-
 (defgeneric queue-pop-wait (queue)
   (:documentation "Attempts to pop one element off QUEUE. If the queue
 is empty, wait until an element is added."))
@@ -95,22 +82,22 @@ for elements to be added to it."))
   (make-instance 'blocking-queue :lockable-instance-name name))
 
 (defmethod seq-empty-p ((queue blocking-queue))
-  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
+  (with-locked-instance queue
     (call-next-method)))
 
 (defmethod queue-push ((queue blocking-queue) element)
-  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
+  (with-locked-instance queue
     (let ((result (call-next-method)))
       (bordeaux-threads:condition-notify (lockable-instance/cond-variable queue))
       result)))
 
 (defmethod queue-pop ((queue blocking-queue) &rest rest)
   (declare (ignore rest))
-  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
+  (with-locked-instance queue
     (call-next-method)))
 
 (defmethod queue-pop-wait ((queue blocking-queue))
-  (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
+  (with-locked-instance queue
     (loop
        while (seq-empty-p queue)
        do (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)))

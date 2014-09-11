@@ -8,5 +8,7 @@
     :components ((:module src
                           :serial t
                           :components ((:file "package")
+                                       (:file "locks")
                                        (:file "blocking-queue")
+                                       (:file "hash-map")
                                        (:file "atomic")))))
