@@ -77,6 +77,10 @@ access pop an element from an empty sequence."))
                   :reader lockable-instance/cond-variable))
   (:documentation "Sequence that supports blocking on empty queues"))
 
+(defmethod initialize-instance :after ((obj lockable-instance) &key lockable-instance-name)
+  (setf (slot-value obj 'lock) (bordeaux-threads:make-lock lockable-instance-name))
+  (setf (slot-value obj 'cond-variable) (bordeaux-threads:make-condition-variable :name lockable-instance-name)))
+
 (defgeneric queue-pop-wait (queue)
   (:documentation "Attempts to pop one element off QUEUE. If the queue
 is empty, wait until an element is added."))
@@ -86,9 +90,9 @@ is empty, wait until an element is added."))
   (:documentation "A thread-safe version of QUEUE that allows waiting
 for elements to be added to it."))
 
-(defun make-blocking-queue ()
+(defun make-blocking-queue (&key name)
   "Create a new instance of a blocking queue."
-  (make-instance 'blocking-queue))
+  (make-instance 'blocking-queue :lockable-instance-name name))
 
 (defmethod seq-empty-p ((queue blocking-queue))
   (bordeaux-threads:with-recursive-lock-held ((lockable-instance/lock queue))
