@@ -4,9 +4,6 @@
   ()
   (:documentation "Generic ordered sequence"))
 
-(defgeneric seq-empty-p (seq)
-  (:documentation "Return non-nil if SEQ is empty."))
-
 (define-condition sequence-empty (error)
   ()
   (:documentation "Error that is raised if an attempt is made to
@@ -29,7 +26,11 @@ access pop an element from an empty sequence."))
     (with-slots (content head tail) obj
       (format stream "SIZE ~a" (mod (- tail head) (array-dimension content 0))))))
 
-(defmethod seq-empty-p ((queue queue))
+(defmethod content-length ((queue queue))
+  (with-slots (head tail content) queue
+    (mod (- tail head) (array-dimension content 0))))
+
+(defmethod empty-p ((queue queue))
   (with-slots (head tail) queue
     (= head tail)))
 
@@ -81,7 +82,7 @@ for elements to be added to it."))
   "Create a new instance of a blocking queue."
   (make-instance 'blocking-queue :lockable-instance-name name))
 
-(defmethod seq-empty-p ((queue blocking-queue))
+(defmethod empty-p ((queue blocking-queue))
   (with-locked-instance queue
     (call-next-method)))
 
@@ -99,6 +100,6 @@ for elements to be added to it."))
 (defmethod queue-pop-wait ((queue blocking-queue))
   (with-locked-instance queue
     (loop
-       while (seq-empty-p queue)
+       while (empty-p queue)
        do (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)))
     (queue-pop queue)))

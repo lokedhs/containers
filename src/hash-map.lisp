@@ -1,10 +1,14 @@
 (in-package :containers)
 
+(defclass generic-map (container)
+  ()
+  (:documentation "Superclass of all maps"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Default hash map
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass hash-map ()
+(defclass hash-map (generic-map)
   ((map :type hash-table
         :reader hash-map/map))
   (:documentation "Wrapper for the CL standard hash-table type"))
@@ -18,6 +22,12 @@
 (defgeneric hash-get (map key))
 (defgeneric (setf hash-get) (value map key))
 (defgeneric hash-get-or-update (map key update-fn))
+
+(defmethod content-length ((map hash-map))
+  (hash-table-size (hash-map/map map)))
+
+(defmethod empty-p ((map hash-map))
+  (zerop (hash-table-size (hash-map/map map))))
 
 (defmethod hash-get ((map hash-map) key)
   (gethash key (hash-map/map map)))

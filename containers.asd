@@ -9,6 +9,8 @@
                           :serial t
                           :components ((:file "package")
                                        (:file "locks")
+                                       (:file "generic")
                                        (:file "blocking-queue")
                                        (:file "hash-map")
+                                       (:file "blocking-sets")
                                        (:file "atomic")))))
