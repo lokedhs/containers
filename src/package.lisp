@@ -17,4 +17,5 @@
            #:make-blocking-hash-map
            #:blocking-hash-map
            #:with-hash-get-or-update
-           #:hash-get-or-update))
+           #:hash-get-or-update
+           #:blocking-queue))
