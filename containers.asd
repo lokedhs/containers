@@ -13,4 +13,5 @@
                                        (:file "blocking-queue")
                                        (:file "hash-map")
                                        (:file "blocking-sets")
-                                       (:file "atomic")))))
+                                       (:file "atomic")
+                                       (:file "task")))))
