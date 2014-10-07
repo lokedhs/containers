@@ -25,3 +25,8 @@
          (if (typep ,obj-sym 'lockable-instance)
              (with-locked-instance ,obj-sym (,body-sym))
              (,body-sym))))))
+
+(defmacro with-disabled-interrupts (&body body)
+  `(progn
+     #+sbcl (sb-sys:without-interrupts ,@body)
+     (progn ,@body)))

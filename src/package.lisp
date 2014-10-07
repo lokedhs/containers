@@ -18,4 +18,5 @@
            #:blocking-hash-map
            #:with-hash-get-or-update
            #:hash-get-or-update
-           #:blocking-queue))
+           #:blocking-queue
+           #:with-disabled-interrupts))

@@ -37,4 +37,5 @@ get or set atomically."))
     `(let ((,variable-sym ,variable))
        (symbol-macrolet ((,sym (atomic-variable/value ,variable-sym)))
          (bordeaux-threads:with-lock-held ((atomic-variable/lock ,variable-sym))
-           ,@body)))))
+           (with-disabled-interrupts
+             ,@body))))))
