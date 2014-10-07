@@ -29,4 +29,4 @@
 (defmacro with-disabled-interrupts (&body body)
   `(progn
      #+sbcl (sb-sys:without-interrupts ,@body)
-     (progn ,@body)))
+     #-sbcl (progn ,@body)))
