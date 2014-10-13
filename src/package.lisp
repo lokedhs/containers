@@ -1,4 +1,4 @@
-(defpackage :containers
+(defpackage :dhs-sequences
   (:use :cl)
   (:documentation "Container library")
   (:export #:queue-push

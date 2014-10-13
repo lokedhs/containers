@@ -1,4 +1,4 @@
-(in-package :containers)
+(in-package :dhs-sequences)
 
 (defclass lockable-instance ()
   ((lock          :type t

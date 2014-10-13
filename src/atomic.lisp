@@ -1,4 +1,4 @@
-(in-package :containers)
+(in-package :dhs-sequences)
 
 (defclass atomic-variable ()
   ((value :type t
