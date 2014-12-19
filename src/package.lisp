@@ -19,4 +19,7 @@
            #:with-hash-get-or-update
            #:hash-get-or-update
            #:blocking-queue
-           #:with-disabled-interrupts))
+           #:with-disabled-interrupts
+           #:queue-start-workers
+           #:queue-job
+           #:task-queue))
