@@ -32,7 +32,7 @@
      for job = (queue-pop-wait (task-queue/queue queue))
      do (if (functionp job)
             (funcall job)
-            (log:error "Job is not a function: ~s" job))))
+            (warn "Job is not a function: ~s" job))))
 
 (defmethod queue-start-workers ((queue task-queue))
   (bordeaux-threads:with-lock-held ((lockable-instance/lock queue))
