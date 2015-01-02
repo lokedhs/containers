@@ -22,4 +22,5 @@
            #:with-disabled-interrupts
            #:queue-start-workers
            #:queue-job
-           #:task-queue))
+           #:task-queue
+           #:with-locked-instance))
