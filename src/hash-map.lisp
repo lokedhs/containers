@@ -22,6 +22,7 @@
 (defgeneric hash-get (map key))
 (defgeneric (setf hash-get) (value map key))
 (defgeneric hash-get-or-update (map key update-fn))
+(defgeneric hash-iterator (map))
 
 (defmethod content-length ((map hash-map))
   (hash-table-size (hash-map/map map)))
@@ -48,6 +49,16 @@
     (let ((body-sym (gensym "BODY-")))
       `(flet ((,body-sym () ,@body))
          (hash-get-or-update ,map ,key #',body-sym)))))
+
+(defmethod hash-iterator ((map hash-map))
+  (let ((keys (loop
+                 for key being each hash-key in (hash-map/map map)
+                 collect key)))
+    (let ((element keys))
+      (lambda ()
+        (let ((key (car element)))
+          (setf element (cdr element))
+          key)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Thread-safe hash map
