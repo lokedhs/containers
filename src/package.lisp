@@ -24,4 +24,5 @@
            #:queue-job
            #:task-queue
            #:with-locked-instance
-           #:hash-iterator))
+           #:hash-iterator
+           #:hash-remove))

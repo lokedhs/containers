@@ -21,6 +21,7 @@
 
 (defgeneric hash-get (map key))
 (defgeneric (setf hash-get) (value map key))
+(defgeneric hash-remove (map key))
 (defgeneric hash-get-or-update (map key update-fn))
 (defgeneric hash-iterator (map))
 
@@ -35,6 +36,9 @@
 
 (defmethod (setf hash-get) (value (map hash-map) key)
   (setf (gethash key (hash-map/map map)) value))
+
+(defmethod hash-remove ((map hash-map) key)
+  (remhash key (hash-map/map map)))
 
 (defmethod hash-get-or-update ((map hash-map) key update-fn)
   (check-type update-fn function)
@@ -76,6 +80,10 @@
     (call-next-method)))
 
 (defmethod (setf hash-get) :around (value (map blocking-hash-map) key)
+  (with-locked-instance map
+    (call-next-method)))
+
+(defmethod hash-remove :around ((map blocking-hash-map) key)
   (with-locked-instance map
     (call-next-method)))
 
