@@ -23,7 +23,7 @@
 (defgeneric (setf hash-get) (value map key))
 (defgeneric hash-remove (map key))
 (defgeneric hash-get-or-update (map key update-fn))
-(defgeneric hash-iterator (map))
+(defgeneric hash-iterator (map &key content))
 
 (defmethod content-length ((map hash-map))
   (hash-table-size (hash-map/map map)))
@@ -54,10 +54,17 @@
       `(flet ((,body-sym () ,@body))
          (hash-get-or-update ,map ,key #',body-sym)))))
 
-(defmethod hash-iterator ((map hash-map))
-  (let ((keys (loop
-                 for key being each hash-key in (hash-map/map map)
-                 collect key)))
+(defmethod hash-iterator ((map hash-map) &key (content :key))
+  (let ((keys (ecase content
+                (:key (loop
+                         for key being each hash-key in (hash-map/map map)
+                         collect key))
+                (:value (loop
+                           for value being each hash-value in (hash-map/map map)
+                           collect value))
+                (:both (loop
+                          for key being each hash-key in (hash-map/map map) using (hash-value value)
+                          collect (cons key value))))))
     (let ((element keys))
       (lambda ()
         (let ((key (car element)))

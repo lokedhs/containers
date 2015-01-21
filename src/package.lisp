@@ -25,4 +25,5 @@
            #:task-queue
            #:with-locked-instance
            #:hash-iterator
-           #:hash-remove))
+           #:hash-remove
+           #:make-cas-atomic-variable))
