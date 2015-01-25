@@ -28,4 +28,5 @@
            #:hash-remove
            #:cas
            #:make-cas-wrapper
-           #:cas-wrapper/value))
+           #:cas-wrapper/value
+           #:cas-wrapper))
