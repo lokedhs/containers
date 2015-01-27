@@ -4,7 +4,8 @@
     :license "BSD"
     :serial t
     :depends-on (:alexandria
-                 :bordeaux-threads)
+                 :bordeaux-threads
+                 :local-time)
     :components ((:module src
                           :serial t
                           :components ((:file "package")

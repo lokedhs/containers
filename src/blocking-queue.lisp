@@ -97,14 +97,36 @@ for elements to be added to it."))
   (with-locked-instance queue
     (call-next-method)))
 
+(defun current-time ()
+  (let ((now (local-time:now)))
+    (+ (local-time:timestamp-to-unix now)
+       (/ (local-time:nsec-of now) 1000000000))))
+
+(defun %queue-pop-wait (queue timeout)
+  (with-locked-instance queue
+    (if (and timeout (<= timeout 0))
+        (unless (empty-p queue)
+          (queue-pop queue))
+        ;; ELSE: Need to wait for updated to the queue
+        (progn
+          #+sbcl (sb-thread:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)
+                                           :timeout timeout)
+          #-sbcl (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue))
+          (unless (empty-p queue)
+            (queue-pop queue))))))
+
 (defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
   #-sbcl (when timeout
            (error "Timeout is only supported on SBCL"))
-  (with-locked-instance queue
-    (loop
-       while (empty-p queue)
-       do (progn
-            #+sbcl (sb-thread:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)
-                                             :timeout timeout)
-            #-sbcl (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue))))
+  (check-type timeout (or null number))
+  (loop
+     with start = (current-time)
+     with now = start
+     with cutoff = (if timeout (+ start timeout) 0)
+     do (let ((result (%queue-pop-wait queue (- cutoff now))))
+          (when result
+            (return result))
+          (setq now (current-time)))
+     while (< now cutoff))
+  (unless (empty-p queue)
     (queue-pop queue)))
