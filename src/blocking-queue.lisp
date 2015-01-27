@@ -69,7 +69,7 @@ access pop an element from an empty sequence."))
           (setq head (mod (1+ head) (array-dimension content 0)))
           result))))
 
-(defgeneric queue-pop-wait (queue)
+(defgeneric queue-pop-wait (queue &key timeout)
   (:documentation "Attempts to pop one element off QUEUE. If the queue
 is empty, wait until an element is added."))
 
@@ -97,9 +97,14 @@ for elements to be added to it."))
   (with-locked-instance queue
     (call-next-method)))
 
-(defmethod queue-pop-wait ((queue blocking-queue))
+(defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
+  #-sbcl (when timeout
+           (error "Timeout is only supported on SBCL"))
   (with-locked-instance queue
     (loop
        while (empty-p queue)
-       do (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)))
+       do (progn
+            #+sbcl (sb-thread:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)
+                                             :timeout timeout)
+            #-sbcl (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue))))
     (queue-pop queue)))
