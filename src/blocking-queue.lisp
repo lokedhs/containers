@@ -106,11 +106,16 @@ for elements to be added to it."))
   (with-locked-instance queue
     (if (empty-p queue)
         (progn
-          #+sbcl (sb-thread:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue)
-                                           :timeout timeout)
-          #-sbcl (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue) (lockable-instance/lock queue))
-          (unless (empty-p queue)
-            (queue-pop queue)))
+          (when (progn
+                  #+sbcl (sb-thread:condition-wait (lockable-instance/cond-variable queue)
+                                                   (lockable-instance/lock queue)
+                                                   :timeout timeout)
+                  #-sbcl (progn
+                           (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue)
+                                                            (lockable-instance/lock queue))
+                           t))
+            (unless (empty-p queue)
+              (queue-pop queue))))
         ;; ELSE: We have an element on the queue
         (queue-pop queue))))
 
