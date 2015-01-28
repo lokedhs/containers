@@ -2,7 +2,7 @@
 
 (defclass lockable-instance ()
   ((lock          :type t
-                  :initform (bordeaux-threads:make-lock)
+                  :initform (bordeaux-threads:make-recursive-lock)
                   :reader lockable-instance/lock)
    (cond-variable :type t
                   :initform (bordeaux-threads:make-condition-variable)

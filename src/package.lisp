@@ -29,4 +29,5 @@
            #:cas
            #:make-cas-wrapper
            #:cas-wrapper/value
-           #:cas-wrapper))
+           #:cas-wrapper
+           #:content-length))
