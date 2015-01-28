@@ -9,6 +9,7 @@
   (:documentation "Error that is raised if an attempt is made to
 access pop an element from an empty sequence."))
 
+#+nil
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (push :log-queue *features*)
   (push :debug-queue *features*))
