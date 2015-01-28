@@ -16,7 +16,7 @@ access pop an element from an empty sequence."))
 
 (defclass queue (generic-sequence)
   ((content :type (vector t *)
-            :initform (make-array 10 :adjustable t)
+            :initform (make-array 32 :adjustable t)
             :accessor queue/content)
    (head    :type (integer 0)
             :initform 0
