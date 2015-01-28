@@ -9,6 +9,10 @@
   (:documentation "Error that is raised if an attempt is made to
 access pop an element from an empty sequence."))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (push :log-queue *features*)
+  (push :debug-queue *features*))
+
 (defclass queue (generic-sequence)
   ((content :type (vector t *)
             :initform (make-array 10 :adjustable t)
@@ -50,13 +54,15 @@ access pop an element from an empty sequence."))
   (with-slots (content head tail) queue
     (let ((size (array-dimension content 0)))
       (when (= (mod (- tail head) size) (1- size))
-        (adjust-array content (* size 2))
-        (when (< tail head)
-          (loop
-             for src from tail below head
-             for dest from (1+ head)
-             do (setf (aref content tail) dest))
-          (setq tail (+ tail size))))
+        (let* ((new-size (* size 2))
+               (new-head (- new-size (- size head))))
+          (adjust-array content new-size)
+          (when (< tail head)
+            (loop
+               for src from head below size
+               for dest from new-head
+               do (setf (aref content dest) (aref content src)))
+            (setq head new-head))))
       (setf (aref content tail) element)
       (setq tail (mod (1+ tail) (array-dimension content 0)))
       element)))
