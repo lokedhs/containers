@@ -30,4 +30,5 @@
            #:make-cas-wrapper
            #:cas-wrapper/value
            #:cas-wrapper
-           #:content-length))
+           #:content-length
+           #:make-queue))
