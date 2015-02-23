@@ -2,15 +2,13 @@
 
 (defclass lockable-instance ()
   ((lock          :type t
-                  :initform (bordeaux-threads:make-recursive-lock)
                   :reader lockable-instance/lock)
    (cond-variable :type t
-                  :initform (bordeaux-threads:make-condition-variable)
                   :reader lockable-instance/cond-variable))
   (:documentation "Sequence that supports blocking on empty queues"))
 
 (defmethod initialize-instance :after ((obj lockable-instance) &key lockable-instance-name)
-  (setf (slot-value obj 'lock) (bordeaux-threads:make-lock lockable-instance-name))
+  (setf (slot-value obj 'lock) (bordeaux-threads:make-recursive-lock lockable-instance-name))
   (setf (slot-value obj 'cond-variable) (bordeaux-threads:make-condition-variable :name lockable-instance-name)))
 
 (defmacro with-locked-instance (obj &body body)
