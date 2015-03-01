@@ -115,22 +115,28 @@ for elements to be added to it."))
   (with-locked-instance queue
     (if (empty-p queue)
         (progn
-          (when (progn
-                  #+sbcl (sb-thread:condition-wait (lockable-instance/cond-variable queue)
-                                                   (lockable-instance/lock queue)
-                                                   :timeout timeout)
-                  #-sbcl (progn
-                           (bordeaux-threads:condition-wait (lockable-instance/cond-variable queue)
-                                                            (lockable-instance/lock queue))
-                           t))
+          (when (let ((condition (lockable-instance/cond-variable queue))
+                      (lock (lockable-instance/lock queue)))
+                  #+sbcl
+                  (sb-thread:condition-wait condition lock :timeout timeout)
+                  #+abcl
+                  (progn
+                    (threads:synchronized-on condition
+                      (bordeaux-threads:release-lock lock)
+                      (threads:object-wait condition timeout))
+                    (bordeaux-threads:acquire-lock lock))
+                  #-(or sbcl abcl)
+                  (progn
+                    (bordeaux-threads:condition-wait condition lock)
+                    t))
             (unless (empty-p queue)
               (queue-pop queue))))
         ;; ELSE: We have an element on the queue
         (queue-pop queue))))
 
 (defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
-  #-sbcl (when timeout
-           (error "Timeout is only supported on SBCL"))
+  #-(or sbcl abcl) (when timeout
+                     (error "Timeout is only supported on SBCL and ABCL"))
   (check-type timeout (or null number))
   (if timeout
       (loop
