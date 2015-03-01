@@ -3,8 +3,8 @@
 (declaim (optimize (speed 0) (debug 3)))
 
 (defun check-with-tolerance (value expected tolerance)
-  (fiveam:is (>= value (- expected tolerance)))
-  (fiveam:is (<= value (+ expected tolerance))))
+  (fiveam:is (>= value (- expected tolerance)) "value is too small, value=~s, expected=~s, tolerance=~s" value expected tolerance)
+  (fiveam:is (<= value (+ expected tolerance)) "value is too big, value=~s, expected=~s, tolerance=~s" value expected tolerance))
 
 (defmacro define-queue-test ((name pop-fn-sym) &body body)
   (flet ((test-name (suffix)
