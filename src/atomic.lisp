@@ -46,14 +46,23 @@ get or set atomically."))
 
 (defclass cas-wrapper ()
   ((value :type t
-          :initarg :value)))
+          :initarg :value)
+   #-sbcl
+   (lock  :type t
+          :initform (bordeaux-threads:make-lock))))
 
 (defun make-cas-wrapper (value)
   (make-instance 'cas-wrapper :value value))
 
 (defun cas (wrapper old-value new-value)
-  #+sbcl (sb-ext:cas (slot-value wrapper 'value) old-value new-value)
-  #-sbcl (error "CAS is not supported on this platform"))
+  #+sbcl
+  (sb-ext:cas (slot-value wrapper 'value) old-value new-value)
+  #-sbcl
+  (bordeaux-threads:with-lock-held ((slot-value wrapper 'lock))
+    (let ((v (slot-value wrapper 'value)))
+      (when (eq v old-value)
+        (setf (slot-value wrapper 'value) new-value))
+      v)))
 
 (defun cas-wrapper/value (wrapper)
   (slot-value wrapper 'value))
