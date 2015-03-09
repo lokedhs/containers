@@ -66,3 +66,11 @@ get or set atomically."))
 
 (defun cas-wrapper/value (wrapper)
   (slot-value wrapper 'value))
+
+(defun call-with-cas (wrapper fn)
+  (loop
+     for old = (cas-wrapper/value wrapper)
+     for v = (funcall fn old)
+     for result = (cas wrapper old v)
+     when (eq old result)
+     return v))
