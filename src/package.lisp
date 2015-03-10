@@ -32,4 +32,5 @@
            #:cas-wrapper
            #:content-length
            #:make-queue
-           #:call-with-cas))
+           #:call-with-cas
+           #:with-cas-update))
