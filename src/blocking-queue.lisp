@@ -23,9 +23,7 @@ access pop an element from an empty sequence."))
             :accessor queue/head)
    (tail    :type (integer 0)
             :initform 0
-            :accessor queue/tail)
-   #+log-queue(log :type list
-                   :initform nil))
+            :accessor queue/tail))
   (:documentation "Queue that supports insertion and removal from both the tail and head"))
 
 (defmethod print-object ((obj queue) stream)
@@ -154,29 +152,3 @@ for elements to be added to it."))
          do (let ((result (%queue-pop-wait queue nil)))
               (when result
                 (return result))))))
-
-#+debug-queue
-(defmethod queue-push :around ((q blocking-queue) element)
-  (with-locked-instance q
-    (let* ((size-before (content-length q))
-           (result (call-next-method))
-           (size-after (content-length q)))
-      (when (/= size-before (1- size-after))
-        (log:error "Inconsistent result from push"))
-      #+log-queue(push (list 'push size-before size-after element result) (slot-value q 'log))
-      result)))
-
-#+debug-queue
-(defmethod queue-pop :around ((q blocking-queue) &key (if-empty nil if-empty-set-p))
-  (declare (ignore if-empty))
-  (with-locked-instance q
-    (let* ((size-before (content-length q))
-           (result (call-next-method))
-           (size-after (content-length q)))
-      (when (and (or (not if-empty-set-p)
-                     (not (zerop size-before)))
-                 (/= size-before (1+ size-after)))
-        (log:error "Inconsistent result from pop, size-before=~s, size-after=~s, if-empty-set-p=~s"
-                   size-before size-after if-empty-set-p))
-      #+log-queue(push (list 'pop size-before size-after result) (slot-value q 'log))
-      result)))
