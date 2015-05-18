@@ -45,8 +45,8 @@
   (multiple-value-bind (value exist-p)
       (hash-get map key)
     (if exist-p
-        value
-        (setf (hash-get map key) (funcall update-fn)))))
+        (values value nil)
+        (values (setf (hash-get map key) (funcall update-fn)) t))))
 
 (defmacro with-hash-get-or-update (map key &body body)
   (alexandria:once-only (map key)
