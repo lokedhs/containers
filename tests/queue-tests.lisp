@@ -1,6 +1,6 @@
 (in-package :dhs-sequence-tests)
 
-(declaim (optimize (speed 0) (debug 3)))
+(declaim (optimize (safety 3) (speed 0) (debug 3)))
 
 (defun check-with-tolerance (value expected tolerance)
   (fiveam:is (>= value (- expected tolerance)) "value is too small, value=~s, expected=~s, tolerance=~s" value expected tolerance)
