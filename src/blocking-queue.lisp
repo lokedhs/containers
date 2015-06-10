@@ -94,6 +94,7 @@ for elements to be added to it."))
     (call-next-method)))
 
 (defmethod queue-push ((queue blocking-queue) element)
+  (declare (ignore element))
   (with-locked-instance queue
     (let ((result (call-next-method)))
       (bordeaux-threads:condition-notify (lockable-instance/cond-variable queue))
@@ -123,7 +124,15 @@ for elements to be added to it."))
                     (apply #'threads:object-wait condition (if timeout (list timeout))))
                   (bordeaux-threads:acquire-lock lock)
                   t)
-                #-(or sbcl abcl)
+                #+ccl
+                (progn
+                  (ccl:release-lock lock)
+                  (unwind-protect
+                       (if timeout
+                           (ccl:timed-wait-on-semaphore condition timeout)
+                           (ccl:wait-on-semaphore condition))
+                    (ccl:grab-lock lock)))
+                #-(or sbcl abcl ccl)
                 (progn
                   (bordeaux-threads:condition-wait condition lock)
                   t))
@@ -133,8 +142,9 @@ for elements to be added to it."))
         (queue-pop queue))))
 
 (defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
-  #-(or sbcl abcl) (when timeout
-                     (error "Timeout is only supported on SBCL and ABCL"))
+  #-(or sbcl abcl ccl)
+  (when timeout
+    (error "Timeout is only supported on SBCL and ABCL"))
   (check-type timeout (or null number))
   (if timeout
       (loop
