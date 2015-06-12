@@ -51,7 +51,7 @@ get or set atomically."))
    (lock  :type t
           :initform (bordeaux-threads:make-lock))))
 
-(defmethod print-object (obj stream)
+(defmethod print-object ((obj cas-wrapper) stream)
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "VALUE ~s"
             (if (slot-boundp obj 'value)
