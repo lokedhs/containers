@@ -33,4 +33,5 @@
            #:content-length
            #:make-queue
            #:call-with-cas
-           #:with-cas-update))
+           #:with-cas-update
+           #:queue))
