@@ -34,4 +34,5 @@
            #:make-queue
            #:call-with-cas
            #:with-cas-update
-           #:queue))
+           #:queue
+           #:hash-keys))

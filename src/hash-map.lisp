@@ -24,6 +24,7 @@
 (defgeneric hash-remove (map key))
 (defgeneric hash-get-or-update (map key update-fn))
 (defgeneric hash-iterator (map &key content))
+(defgeneric hash-keys (map))
 
 (defmethod content-length ((map hash-map))
   (hash-table-size (hash-map/map map)))
@@ -72,6 +73,11 @@
           (setf element (cdr element))
           (values key (if prev-element t nil)))))))
 
+(defmethod hash-keys ((map hash-map))
+  (loop
+     for key being each hash-key in (hash-map/map map)
+     collect key))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Thread-safe hash map
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -96,5 +102,9 @@
     (call-next-method)))
 
 (defmethod hash-get-or-update ((map blocking-hash-map) key update-fn)
+  (with-locked-instance map
+    (call-next-method)))
+
+(defmethod hash-keys ((map blocking-hash-map))
   (with-locked-instance map
     (call-next-method)))
