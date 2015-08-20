@@ -7,6 +7,9 @@
 (defgeneric content-length (container)
   (:documentation "Returns the number of elements in CONTAINER"))
 
+(defgeneric delete-all (container)
+  (:documentation "Removes all entries from CONTAINER"))
+
 (defgeneric empty-p (container)
   (:documentation "Returns non-NIL if CONTAINER is empty"))
 

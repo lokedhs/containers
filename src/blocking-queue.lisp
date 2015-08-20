@@ -39,6 +39,15 @@ access pop an element from an empty sequence."))
   (with-slots (head tail) queue
     (= head tail)))
 
+(defmethod delete-all ((queue queue))
+  (loop
+     with content = (queue/content queue)
+     with length = (array-dimension content 0)
+     for i from 0 below length
+     do (setf (aref content i) nil))
+  (setf (queue/head queue) 0)
+  (setf (queue/tail queue) 0))
+
 (defun make-queue ()
   "Create a new instance of a queue."
   (make-instance 'queue))
@@ -73,6 +82,7 @@ access pop an element from an empty sequence."))
           if-empty
           (error 'sequence-empty))
         (let ((result (aref content head)))
+          (setf (aref content head) nil)
           (setq head (mod (1+ head) (array-dimension content 0)))
           result))))
 
@@ -90,6 +100,10 @@ for elements to be added to it."))
   (make-instance 'blocking-queue :lockable-instance-name name))
 
 (defmethod empty-p ((queue blocking-queue))
+  (with-locked-instance queue
+    (call-next-method)))
+
+(defmethod delete-all ((queue blocking-queue))
   (with-locked-instance queue
     (call-next-method)))
 

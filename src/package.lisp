@@ -35,4 +35,5 @@
            #:call-with-cas
            #:with-cas-update
            #:queue
-           #:hash-keys))
+           #:hash-keys
+           #:delete-all))
