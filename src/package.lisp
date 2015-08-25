@@ -36,4 +36,8 @@
            #:with-cas-update
            #:queue
            #:hash-keys
-           #:delete-all))
+           #:delete-all
+           #:container))
+
+(defpackage :dhs-sequences.red-black-tree
+    (:use :cl :dhs-sequences))
