@@ -40,4 +40,6 @@
            #:container))
 
 (defpackage :dhs-sequences.red-black-tree
-    (:use :cl :dhs-sequences))
+    (:use :cl :dhs-sequences)
+    (:export
+     #:red-black-tree))

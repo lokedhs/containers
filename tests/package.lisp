@@ -1,2 +1,4 @@
 (defpackage :dhs-sequence-tests
-  (:use :cl :dhs-sequences))
+  (:use :cl :dhs-sequences)
+  (:export
+   #:red-black-tree))

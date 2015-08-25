@@ -8,4 +8,5 @@
   :components ((:module tests
                         :serial t
                         :components ((:file "package")
-                                     (:file "queue-tests")))))
+                                     (:file "queue-tests")
+                                     (:file "rbtree-tests")))))
