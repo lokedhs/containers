@@ -331,3 +331,10 @@
 
 (defmethod dhs-sequences:node-element ((node node))
   (node/value node))
+
+(defmethod dhs-sequences:content-length ((tree red-black-tree))
+  (let ((e (red-black-tree/empty-node tree)))
+    (loop
+       for node = (rb-first-node tree) then (rb-successor tree node)
+       until (eq node e)
+       summing 1)))

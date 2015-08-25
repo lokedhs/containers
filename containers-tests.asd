@@ -9,4 +9,5 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "queue-tests")
-                                     (:file "rbtree-tests")))))
+                                     (:file "rbtree-tests")
+                                     (:file "rbtree-special-test-data")))))
