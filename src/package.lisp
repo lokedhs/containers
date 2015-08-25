@@ -37,7 +37,16 @@
            #:queue
            #:hash-keys
            #:delete-all
-           #:container))
+           #:container
+           #:tree-insert
+           #:tree-find-node
+           #:tree-delete-node
+           #:tree-delete-element
+           #:tree-first-node
+           #:tree-first-element
+           #:node-element
+           #:tree-previous
+           #:tree-next))
 
 (defpackage :dhs-sequences.red-black-tree
     (:use :cl :dhs-sequences)

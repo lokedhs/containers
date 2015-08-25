@@ -59,7 +59,7 @@
       (setf (node/left root) e)
       (setf (node/right root) e))))
 
-(defun left-rotate (tree x)
+(defun rb-left-rotate (tree x)
   (check-type tree red-black-tree)
   (check-type x node)
   (let ((e (red-black-tree/empty-node tree))
@@ -74,7 +74,7 @@
     (setf (node/left y) x)
     (setf (node/parent x) y)))
 
-(defun right-rotate (tree y)
+(defun rb-right-rotate (tree y)
   (check-type tree red-black-tree)
   (check-type y node)
   (let ((e (red-black-tree/empty-node tree))
@@ -89,7 +89,7 @@
     (setf (node/right x) y)
     (setf (node/parent y) x)))
 
-(defun tree-insert-help (tree z)
+(defun rb-insert-help (tree z)
   (check-type tree red-black-tree)
   (check-type z node)
   (let ((e (red-black-tree/empty-node tree)))
@@ -112,10 +112,10 @@
           (setf (node/left y) z)
           (setf (node/right y) z)))))
 
-(defun tree-insert (tree value)
+(defun rb-insert-node (tree value)
   (check-type tree red-black-tree)
   (let ((x (make-instance 'node :value value)))
-    (tree-insert-help tree x)
+    (rb-insert-help tree x)
     (let ((new-node x))
       (setf (node/red x) t)
       (loop
@@ -132,10 +132,10 @@
                     (progn
                       (when (eq x (node/right (node/parent x)))
                         (setf x (node/parent x))
-                        (left-rotate tree x))
+                        (rb-left-rotate tree x))
                       (setf (node/red (node/parent x)) nil)
                       (setf (node/red (node/parent (node/parent x))) t)
-                      (right-rotate tree (node/parent (node/parent x)))))))
+                      (rb-right-rotate tree (node/parent (node/parent x)))))))
          else
          do (let ((y (node/left (node/parent (node/parent x)))))
               (if (node/red y)
@@ -147,14 +147,14 @@
                   (progn
                     (when (eq x (node/left (node/parent x)))
                       (setf x (node/parent x))
-                      (right-rotate tree x))
+                      (rb-right-rotate tree x))
                     (setf (node/red (node/parent x)) nil)
                     (setf (node/red (node/parent (node/parent x))) t)
-                    (left-rotate tree (node/parent (node/parent x)))))))
+                    (rb-left-rotate tree (node/parent (node/parent x)))))))
       (setf (node/red (node/left (red-black-tree/root tree))) nil)
       new-node)))
 
-(defun tree-successor (tree x)
+(defun rb-successor (tree x)
   (check-type tree red-black-tree)
   (check-type x node)
   (let ((e (red-black-tree/empty-node tree))
@@ -174,7 +174,7 @@
                   (setf y (node/parent y)))
              finally (return (if (eq y root) e y)))))))
 
-(defun exact-query (tree key)
+(defun rb-exact-query (tree key)
   (let ((e (red-black-tree/empty-node tree))
         (x (node/left (red-black-tree/root tree)))
         (test-fn (red-black-tree/test-fn tree))
@@ -192,7 +192,7 @@
            do (return nil)
            finally (return x)))))
 
-(defun tree-first-node (tree)
+(defun rb-first-node (tree)
   (let ((e (red-black-tree/empty-node tree))
         (x (red-black-tree/root tree)))
     (if (eq (node/left x) e)
@@ -202,7 +202,7 @@
            until (eq (node/left x) e)
            finally (return x)))))
 
-(defun tree-delete-fixup (tree x)
+(defun rb-delete-fixup (tree x)
   (check-type tree red-black-tree)
   (check-type x node)
   (loop
@@ -214,7 +214,7 @@
           (when (node/red w)
             (setf (node/red w) nil)
             (setf (node/red (node/parent x)) t)
-            (left-rotate tree (node/parent x))
+            (rb-left-rotate tree (node/parent x))
             (setf w (node/right (node/parent x))))
           (if (and (not (node/red (node/right w)))
                    (not (node/red (node/left w))))
@@ -225,19 +225,19 @@
                 (when (not (node/red (node/right w)))
                   (setf (node/red (node/left w)) nil)
                   (setf (node/red w) t)
-                  (right-rotate tree w)
+                  (rb-right-rotate tree w)
                   (setf w (node/right (node/parent x))))
                 (setf (node/red w) (node/red (node/parent x)))
                 (setf (node/red (node/parent x)) nil)
                 (setf (node/red (node/right w)) nil)
-                (left-rotate tree (node/parent x))
+                (rb-left-rotate tree (node/parent x))
                 (setf x root))))
      else
      do (let ((w (node/left (node/parent x))))
           (when (node/red w)
             (setf (node/red w) nil)
             (setf (node/red (node/parent x)) t)
-            (right-rotate tree (node/parent x))
+            (rb-right-rotate tree (node/parent x))
             (setf w (node/left (node/parent x))))
           (if (and (not (node/red (node/right w)))
                    (not (node/red (node/left w))))
@@ -252,11 +252,11 @@
                 (setf (node/red w) (node/red (node/parent x)))
                 (setf (node/red (node/parent x)) nil)
                 (setf (node/red (node/left w)) nil)
-                (right-rotate tree (node/parent x))
+                (rb-right-rotate tree (node/parent x))
                 (setf x root)))))
   (setf (node/red x) nil))
 
-(defun tree-delete (tree z)
+(defun rb-delete (tree z)
   (check-type tree red-black-tree)
   (check-type z node)
   (let* ((e (red-black-tree/empty-node tree))
@@ -264,7 +264,7 @@
          (y (if (or (eq (node/left z) e)
                     (eq (node/right z) e))
                 z
-                (tree-successor tree z)))
+                (rb-successor tree z)))
          (x (if (eq (node/left y) e)
                 (node/right y)
                 (node/left y))))
@@ -277,7 +277,7 @@
     (if (not (eq z y))
         (progn
           (when (not (node/red y))
-            (tree-delete-fixup tree x))
+            (rb-delete-fixup tree x))
           (setf (node/left y) (node/left z))
           (setf (node/right y) (node/right z))
           (setf (node/parent y) (node/parent z))
@@ -288,4 +288,46 @@
               (setf (node/left (node/parent z)) y)
               (setf (node/right (node/parent z)) y)))
         (when (not (node/red y))
-          (tree-delete-fixup tree x)))))
+          (rb-delete-fixup tree x)))))
+
+;;;
+;;;  API implementation
+;;;
+
+(defmethod dhs-sequences:tree-insert ((tree red-black-tree) element)
+  (rb-insert-node tree element))
+
+(defmethod dhs-sequences:tree-find-node ((tree red-black-tree) key)
+  (rb-exact-query tree key))
+
+(defmethod dhs-sequences:tree-delete-node ((tree red-black-tree) node)
+  (check-type node node)
+  (rb-delete tree node))
+
+(defmethod dhs-sequences:tree-delete-element ((tree red-black-tree) element)
+  (let ((node (rb-exact-query tree element)))
+    (if node
+        (rb-delete tree node)
+        nil)))
+
+(defmethod dhs-sequences:tree-first-node ((tree red-black-tree))
+  (let ((node (rb-first-node tree)))
+    (if (eq node (red-black-tree/empty-node tree))
+        nil
+        node)))
+
+(defmethod dhs-sequences:tree-first-element ((tree red-black-tree))
+  (let ((node (rb-first-node tree)))
+    (if (eq node (red-black-tree/empty-node tree))
+        nil
+        (node/value node))))
+
+(defmethod dhs-sequences:tree-next ((tree red-black-tree) node)
+  (check-type node node)
+  (let ((node (rb-successor tree node)))
+    (if (eq node (red-black-tree/empty-node tree))
+        nil
+        node)))
+
+(defmethod dhs-sequences:node-element ((node node))
+  (node/value node))

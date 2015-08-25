@@ -22,6 +22,45 @@
 traverse this container."))
 
 ;;;
+;;;  Tree functions
+;;;
+
+(defgeneric tree-insert (tree element)
+  (:documentation "Add ELEMENT to TREE"))
+
+(defgeneric tree-find-node (tree key)
+  (:documentation "Return the node for KEY in TREE, or NIL if the node does not exist."))
+
+(defgeneric tree-delete-node (tree node)
+  (:documentation "Remove NODE from TREE."))
+
+(defgeneric tree-delete-element (tree element)
+  (:documentation "Remove the node corresponding to ELEMENT from TREE.
+Returns the value from the removed node or NIL if the element could
+not be found in the tree."))
+
+(defgeneric tree-first-node (tree)
+  (:documentation "Returns the first node in TREE, or NIL if the tree is empty."))
+
+(defgeneric tree-first-element (tree)
+  (:documentation "Returns the value in the first node of TREE, or NIL if the tree is empty."))
+
+(defgeneric tree-last-node (tree)
+  (:documentation "Returns the last node in TREE, or NIL if the tree is empty."))
+
+(defgeneric tree-last-element (tree)
+  (:documentation "Returns the value in the last node of TREE, or NIL if the tree is empty."))
+
+(defgeneric tree-next (tree node)
+  (:documentation "Returns the subsequent node after NODE in TREE or NIL if this is the last node."))
+
+(defgeneric tree-previous (tree node)
+  (:documentation "Returns the prior node after NODE in TREE or NIL if this is the first node."))
+
+(defgeneric node-element (node)
+  (:documentation "Returns the element corresponding to NODE."))
+
+;;;
 ;;;  Iterator functions
 ;;;
 

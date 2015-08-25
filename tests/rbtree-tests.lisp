@@ -15,15 +15,15 @@
 
 (defun tree-elements (q)
   (loop
-     for x = (dhs-sequences.red-black-tree::tree-first-node q) then (dhs-sequences.red-black-tree::tree-successor q x)
-     until (eq x (dhs-sequences.red-black-tree::red-black-tree/empty-node q))
-     collect (dhs-sequences.red-black-tree::node/value x)))
+     for x = (tree-first-node q) then (tree-next q x)
+     while x
+     collect (node-element x)))
 
 (defun test-insert-n-elements (n)
   (let ((values (make-values-list n))
         (q (make-instance 'dhs-sequences.red-black-tree:red-black-tree)))
     (dolist (v values)
-      (dhs-sequences.red-black-tree::tree-insert q v))
+      (tree-insert q v))
     (let ((sorted (sort values #'string<))
           (from-tree (tree-elements q)))
       (fiveam:is (equal sorted from-tree)))))
@@ -37,15 +37,15 @@
   (let ((values (make-values-list n))
         (q (make-instance 'dhs-sequences.red-black-tree:red-black-tree)))
     (dolist (v values)
-      (dhs-sequences.red-black-tree::tree-insert q v))
+      (tree-insert q v))
     (let ((sorted (sort values #'string<)))
       (fiveam:is (equal sorted (tree-elements q)))
       (loop
          with z = sorted
          for x in values
-         do (let ((node (dhs-sequences.red-black-tree::exact-query q x)))
+         do (let ((node (tree-find-node q x)))
               (fiveam:is (not (null node)))
-              (dhs-sequences.red-black-tree::tree-delete-node q node)
+              (tree-delete-node q node)
               (setf z (remove x z :test #'string=))
               (fiveam:is (equal z (tree-elements q))))))))
 
