@@ -194,9 +194,9 @@
 
 (defun tree-first-node (tree)
   (let ((e (red-black-tree/empty-node tree))
-        (x (node/left (red-black-tree/root tree))))
-    (if (eq x e)
-        nil
+        (x (red-black-tree/root tree)))
+    (if (eq (node/left x) e)
+        e
         (loop
            do (setf x (node/left x))
            until (eq (node/left x) e)
