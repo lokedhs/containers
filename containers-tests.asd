@@ -8,6 +8,7 @@
   :components ((:module tests
                         :serial t
                         :components ((:file "package")
+                                     (:file "common-tests")
                                      (:file "queue-tests")
                                      (:file "rbtree-tests")
                                      (:file "rbtree-special-test-data")))))

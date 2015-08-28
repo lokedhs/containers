@@ -22000,7 +22000,7 @@
   (and (= (car v1) (car v2))
        (= (cdr v1) (cdr v2))))
 
-(fiveam:test rbtree-special-test
+#+nil(fiveam:test rbtree-special-test
   (let ((q (make-instance 'dhs-sequences.red-black-tree:red-black-tree
                           :key #'identity
                           :test #'value<
