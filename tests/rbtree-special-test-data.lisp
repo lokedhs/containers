@@ -22000,16 +22000,26 @@
   (and (= (car v1) (car v2))
        (= (cdr v1) (cdr v2))))
 
-#+nil(fiveam:test rbtree-special-test
+(fiveam:test rbtree-special-test
   (let ((q (make-instance 'dhs-sequences.red-black-tree:red-black-tree
                           :key #'identity
                           :test #'value<
                           :test-equal #'value=)))
     (loop
+       with count = 0
        for (cmd value) in *rbtree-special-test-data*
-       do (ecase cmd
-            (:insert (dhs-sequences:tree-insert q value))
-            (:remove (let ((node (dhs-sequences:tree-find-node q value)))
-                       (fiveam:is-true node "Did not find ~s in tree" value)
-                       (dhs-sequences:tree-delete-node q node)))))
-    (fiveam:is (= 0 (dhs-sequences:content-length q)))))
+       do (progn
+            (fiveam:is (= count (dhs-sequences:content-length q)))
+            (ecase cmd
+              (:insert (dhs-sequences:tree-insert q value)
+                       (incf count)
+                       (let ((node (dhs-sequences:tree-find-node q value)))
+                         (fiveam:is-true node "Did not find ~s in tree after insertion" value)))
+              (:remove (let ((node (dhs-sequences:tree-find-node q value)))
+                         (fiveam:is-true node "Did not find ~s in tree before deletion" value)
+                         (fiveam:is (value= value (dhs-sequences:node-element node)))
+                         (dhs-sequences:tree-delete-node q node)
+                         (decf count)
+                         (let ((removed (dhs-sequences:tree-find-node q value)))
+                           (fiveam:is-false removed "Found ~s in tree after deletion" value))))))
+       finally (fiveam:is (= count (dhs-sequences:content-length q))))))

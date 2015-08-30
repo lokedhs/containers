@@ -248,6 +248,7 @@
                 (when (not (node/red (node/left w)))
                   (setf (node/red (node/right w)) nil)
                   (setf (node/red w) t)
+                  (rb-left-rotate tree w)
                   (setf w (node/left (node/parent x))))
                 (setf (node/red w) (node/red (node/parent x)))
                 (setf (node/red (node/parent x)) nil)
