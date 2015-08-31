@@ -304,6 +304,12 @@
 (defmethod dhs-sequences:tree-find-node ((tree red-black-tree) key)
   (rb-exact-query tree key))
 
+(defmethod dhs-sequences:tree-find-element ((tree red-black-tree) key)
+  (let ((node (rb-exact-query tree key)))
+    (if node
+        (node/value node)
+        nil)))
+
 (defmethod dhs-sequences:tree-delete-node ((tree red-black-tree) node)
   (check-type node node)
   (rb-delete tree node))

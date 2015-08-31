@@ -46,7 +46,8 @@
            #:tree-first-element
            #:node-element
            #:tree-previous
-           #:tree-next))
+           #:tree-next
+           #:tree-find-element))
 
 (defpackage :dhs-sequences.red-black-tree
     (:use :cl :dhs-sequences)

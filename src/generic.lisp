@@ -31,6 +31,9 @@ traverse this container."))
 (defgeneric tree-find-node (tree key)
   (:documentation "Return the node for KEY in TREE, or NIL if the node does not exist."))
 
+(defgeneric tree-find-element (tree key)
+  (:documentation "Return the element for KEY in TREE, or NIL if the node does not exist."))
+
 (defgeneric tree-delete-node (tree node)
   (:documentation "Remove NODE from TREE."))
 
