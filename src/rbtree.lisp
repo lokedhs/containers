@@ -31,10 +31,8 @@
 
 (defclass red-black-tree (container)
   ((root          :type node
-                  :initform (make-instance 'node :red nil)
                   :accessor red-black-tree/root)
    (empty-node    :type node
-                  :initform (make-instance 'node :red nil)
                   :reader red-black-tree/empty-node)
    (test-equal-fn :type function
                   :initform #'string=
@@ -49,15 +47,20 @@
                   :initarg :key
                   :reader red-black-tree/key-fn)))
 
-(defmethod initialize-instance :after ((obj red-black-tree) &key)
-  (let ((e (red-black-tree/empty-node obj)))
+(defun rb-clear-tree (obj)
+  (let ((e (make-instance 'node :red nil)))
+    (setf (slot-value obj 'empty-node) e)
     (setf (node/parent e) e)
     (setf (node/left e) e)
     (setf (node/right e) e)
-    (let ((root (red-black-tree/root obj)))
+    (let ((root (make-instance 'node :red nil)))
+      (setf (red-black-tree/root obj) root)
       (setf (node/parent root) e)
       (setf (node/left root) e)
       (setf (node/right root) e))))
+
+(defmethod initialize-instance :after ((obj red-black-tree) &key)
+  (rb-clear-tree obj))
 
 (defun rb-left-rotate (tree x)
   (check-type tree red-black-tree)
@@ -339,3 +342,6 @@
        for node = (rb-first-node tree) then (rb-successor tree node)
        until (eq node e)
        summing 1)))
+
+(defmethod dhs-sequences:delete-all ((tree red-black-tree))
+  (rb-clear-tree tree))

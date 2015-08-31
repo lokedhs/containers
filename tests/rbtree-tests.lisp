@@ -53,3 +53,12 @@
   (loop
      for i in '(1 2 3 4 5 6 7 8 9 10 100 1000 5000 10000)
      do (test-remove i)))
+
+(fiveam:test rbtree-remove-all-test
+  (let ((values (make-values-list 10000))
+        (q (make-instance 'dhs-sequences.red-black-tree:red-black-tree)))
+    (dolist (v values)
+      (tree-insert q v))
+    (fiveam:is (= (length values) (dhs-sequences:content-length q)))
+    (dhs-sequences:delete-all q)
+    (fiveam:is (zerop (dhs-sequences:content-length q)))))
