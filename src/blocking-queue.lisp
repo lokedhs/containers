@@ -162,14 +162,16 @@ for elements to be added to it."))
   (check-type timeout (or null number))
   (if timeout
       (loop
+         ;; wait-time-epsilon indicates the minimum amount of time to wait
+         with wait-time-epsilon = 1/1000
          with start = (current-time)
          with now = start
          with cutoff = (+ start (rationalize timeout))
-         do (let ((result (%queue-pop-wait queue (- cutoff now))))
+         while (< now cutoff)
+         do (let ((result (%queue-pop-wait queue (max (- cutoff now) wait-time-epsilon))))
               (when result
                 (return result))
               (setq now (current-time)))
-         while (< now cutoff)
          finally (return nil))
       ;; ELSE: No timeout
       (loop
