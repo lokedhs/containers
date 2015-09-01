@@ -158,7 +158,7 @@ for elements to be added to it."))
 (defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
   #-(or sbcl abcl ccl)
   (when timeout
-    (error "Timeout is not support on this CL implementation"))
+    (error "Timeout is not supported on this CL implementation"))
   (check-type timeout (or null number))
   (if timeout
       (loop
