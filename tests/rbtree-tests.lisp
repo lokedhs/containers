@@ -62,3 +62,12 @@
     (fiveam:is (= (length values) (dhs-sequences:content-length q)))
     (dhs-sequences:delete-all q)
     (fiveam:is (zerop (dhs-sequences:content-length q)))))
+
+(defun rbtree-perftest ()
+  (let ((n 100000)
+        (q (make-instance 'dhs-sequences.red-black-tree:red-black-tree)))
+    (loop
+       with p = (make-value-producer)
+       repeat n
+       do (dhs-sequences:tree-insert q (funcall p)))
+    (dhs-sequences:content-length q)))
