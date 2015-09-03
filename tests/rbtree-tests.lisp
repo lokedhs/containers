@@ -64,10 +64,11 @@
     (fiveam:is (zerop (dhs-sequences:content-length q)))))
 
 (defun rbtree-perftest ()
-  (let ((n 100000)
+  (let ((l (make-values-list 400000))
         (q (make-instance 'dhs-sequences.red-black-tree:red-black-tree)))
-    (loop
-       with p = (make-value-producer)
-       repeat n
-       do (dhs-sequences:tree-insert q (funcall p)))
-    (dhs-sequences:content-length q)))
+    (time
+     (progn
+       (loop
+          for v in l
+          do (dhs-sequences:tree-insert q v))
+       (dhs-sequences:content-length q)))))
