@@ -10,15 +10,15 @@
            :initform nil
            :initarg :red
            :accessor node/red)
-   (left   :type (or null node)
+   (left   :type node
            :initform nil
            :accessor node/left
            :initarg :left)
-   (right  :type (or null node)
+   (right  :type node
            :initform nil
            :accessor node/right
            :initarg :right)
-   (parent :type (or null node)
+   (parent :type node
            :initform nil
            :accessor node/parent
            :initarg :parent)))
