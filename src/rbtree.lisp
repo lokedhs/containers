@@ -1,6 +1,6 @@
 (in-package :dhs-sequences.red-black-tree)
 
-(declaim (optimize (speed 0) (safety 3) (debug 3)))
+(declaim (optimize (speed 3) (safety 1) (debug 0)))
 
 (defclass node ()
   ((value  :type t
@@ -24,6 +24,7 @@
            :initarg :parent)))
 
 (defmethod print-object ((obj node) stream)
+  (declare (type stream stream))
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "VALUE ~s" (if (slot-boundp obj 'value)
                                   (slot-value obj 'value)
@@ -101,6 +102,7 @@
     (let ((test-fn (red-black-tree/test-fn tree))
           (key-fn (red-black-tree/key-fn tree))
           (y (red-black-tree/root tree)))
+      (declare (type function test-fn key-fn))
       (loop
          with x = (node/left y)
          until (eq x e)
@@ -183,6 +185,7 @@
         (test-fn (red-black-tree/test-fn tree))
         (test-equal-fn (red-black-tree/test-equal-fn tree))
         (key-fn (red-black-tree/key-fn tree)))
+    (declare (type function test-fn test-equal-fn key-fn))
     (if (eq x e)
         nil
         (loop
