@@ -18,7 +18,7 @@
   (zerop (content-length container)))
 
 (defgeneric make-container-iterator (container)
-  (:documentation "Returns an interator object that can be used to
+  (:documentation "Returns an iterator object that can be used to
 traverse this container."))
 
 ;;;
