@@ -7,19 +7,15 @@
            :initarg :value
            :reader node/value)
    (red    :type (member t nil)
-           :initform nil
            :initarg :red
            :accessor node/red)
    (left   :type node
-           :initform nil
            :accessor node/left
            :initarg :left)
    (right  :type node
-           :initform nil
            :accessor node/right
            :initarg :right)
    (parent :type node
-           :initform nil
            :accessor node/parent
            :initarg :parent)))
 
