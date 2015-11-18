@@ -146,7 +146,9 @@ for elements to be added to it."))
                            (ccl:timed-wait-on-semaphore condition timeout)
                            (ccl:wait-on-semaphore condition))
                     (ccl:grab-lock lock)))
-                #-(or sbcl abcl ccl)
+                #+clisp
+                (mt:exemption-wait condition lock :timeout timeout)
+                #-(or sbcl abcl ccl clisp)
                 (progn
                   (bordeaux-threads:condition-wait condition lock)
                   t))
@@ -156,7 +158,7 @@ for elements to be added to it."))
         (queue-pop queue))))
 
 (defmethod queue-pop-wait ((queue blocking-queue) &key timeout)
-  #-(or sbcl abcl ccl)
+  #-(or sbcl abcl ccl clisp)
   (when timeout
     (error "Timeout is not supported on this CL implementation"))
   (check-type timeout (or null number))
