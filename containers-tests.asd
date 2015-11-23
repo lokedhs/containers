@@ -4,7 +4,8 @@
   :license "BSD"
   :serial t
   :depends-on (:fiveam
-               :containers)
+               :containers
+               :acm-random)
   :components ((:module tests
                         :serial t
                         :components ((:file "package")

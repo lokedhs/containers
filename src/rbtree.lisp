@@ -2,6 +2,12 @@
 
 (declaim (optimize (speed 3) (safety 1) (debug 0)))
 
+(defmacro rb-assert (form)
+  (let ((sym (gensym)))
+    `(let ((,sym ,form))
+       (unless ,sym
+         (error "Incorrect state for ~s" ',form)))))
+
 (defclass node ()
   ((value  :type t
            :initarg :value
@@ -22,9 +28,11 @@
 (defmethod print-object ((obj node) stream)
   (declare (type stream stream))
   (print-unreadable-object (obj stream :type t :identity t)
-    (format stream "VALUE ~s" (if (slot-boundp obj 'value)
-                                  (slot-value obj 'value)
-                                  :not-bound))))
+    (format stream "VALUE ~s ~a"
+            (if (slot-boundp obj 'value)
+                (slot-value obj 'value)
+                :not-bound)
+            (if (slot-value obj 'red) "red" "black"))))
 
 (defclass red-black-tree (container)
   ((root          :type node
@@ -111,7 +119,8 @@
       (if (or (eq y (red-black-tree/root tree))
               (funcall test-fn (funcall key-fn (node/value z)) (funcall key-fn (node/value y))))
           (setf (node/left y) z)
-          (setf (node/right y) z)))))
+          (setf (node/right y) z)))
+    (rb-assert (not (node/red (red-black-tree/empty-node tree))))))
 
 (defun rb-insert-node (tree value)
   (check-type tree red-black-tree)
@@ -153,6 +162,8 @@
                     (setf (node/red (node/parent (node/parent x))) t)
                     (rb-left-rotate tree (node/parent (node/parent x)))))))
       (setf (node/red (node/left (red-black-tree/root tree))) nil)
+      (rb-assert (not (node/red (red-black-tree/empty-node tree))))
+      (rb-assert (not (node/red (red-black-tree/root tree))))
       new-node)))
 
 (defun rb-successor (tree x)
@@ -208,7 +219,7 @@
   (check-type tree red-black-tree)
   (check-type x node)
   (loop
-     with root = (red-black-tree/root tree)
+     with root = (node/left (red-black-tree/root tree))
      while (and (not (node/red x))
                 (not (eq root x)))
      if (eq x (node/left (node/parent x)))
@@ -257,7 +268,8 @@
                 (setf (node/red (node/left w)) nil)
                 (rb-right-rotate tree (node/parent x))
                 (setf x root)))))
-  (setf (node/red x) nil))
+  (setf (node/red x) nil)
+  (rb-assert (not (node/red (red-black-tree/empty-node tree)))))
 
 (defun rb-delete (tree z)
   (check-type tree red-black-tree)
@@ -277,8 +289,9 @@
         (if (eq y (node/left (node/parent y)))
             (setf (node/left (node/parent y)) x)
             (setf (node/right (node/parent y)) x)))
-    (if (not (eq z y))
+    (if (not (eq y z))
         (progn
+          (rb-assert (not (eq y (red-black-tree/empty-node tree))))
           (when (not (node/red y))
             (rb-delete-fixup tree x))
           (setf (node/left y) (node/left z))
@@ -291,7 +304,8 @@
               (setf (node/left (node/parent z)) y)
               (setf (node/right (node/parent z)) y)))
         (when (not (node/red y))
-          (rb-delete-fixup tree x)))))
+          (rb-delete-fixup tree x)))
+    (rb-assert (not (node/red (red-black-tree/empty-node tree))))))
 
 ;;;
 ;;;  API implementation
