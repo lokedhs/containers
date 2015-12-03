@@ -153,33 +153,39 @@
                  node)))
       ;;
       (loop
-         for i from 0 below 100000
-         ;; Simulated forward-flow of time with millisecond precision
-         for current-time = 100000 then (+ current-time 1 (random:next-uint32 random))
-         ;; Insertion of timer either 30 or 3 seconds from now
-         for trigger-time = (if (zerop (mod (random:next-uint32 random) 2))
-                                (+ current-time 30 (mod current-time 2))
-                                (+ current-time 3 (mod current-time 2) 1))
-         ;;
-         ;; At random times, remove a random node
-         when (and (not (dhs-sequences:empty-p tree))
-                   (zerop (mod (random:next-uint32 random) 10)))
-         do (remove-node (find-random-node))
-         ;;
-         ;; Check for expired nodes
-         do (loop
-               for n = (and (not (dhs-sequences:empty-p tree))
-                            (dhs-sequences:tree-first-node tree))
-               while (and n (> current-time (car (dhs-sequences:node-element n))))
-               do (remove-node n))
-         ;;
-         ;; Insert the new node
-         do (let ((element (list (/ trigger-time 1000) i current-time)))
-              (dhs-sequences:tree-insert tree element)
-              (push element outstanding-nodes))
-         ;;
-         ;; Verify the final state of the list
-         finally (progn
-                   (check-verifying-rbtree tree)
-                   (fiveam:is (= (length outstanding-nodes)
-                                 (dhs-sequences:content-length tree))))))))
+        with max = 0
+        for i from 0 below 100000
+        ;; Simulated forward-flow of time with millisecond precision
+        for current-time = 100000 then (+ current-time 1 (/ (1+ (mod (random:next-uint32 random) 500)) 1000))
+        ;; Insertion of timer either 30 or 3 seconds from now
+        for trigger-time = (if (zerop (mod (random:next-uint32 random) 2))
+                               (+ current-time 30 (mod current-time 2))
+                               (+ current-time 3 (mod current-time 2) 1))
+        ;;
+        ;; At random times, remove a random node
+        when (and (not (dhs-sequences:empty-p tree))
+                  (zerop (mod (random:next-uint32 random) 10)))
+          do (remove-node (find-random-node))
+             ;;
+             ;; Check for expired nodes
+        do (loop
+             for n = (and (not (dhs-sequences:empty-p tree))
+                          (dhs-sequences:tree-first-node tree))
+             while (and n (> current-time (car (dhs-sequences:node-element n))))
+             do (remove-node n))
+           ;;
+           ;; Insert the new node
+        unless (dhs-sequences:tree-find-node tree trigger-time)
+        do (let ((element (list trigger-time i current-time)))
+             (dhs-sequences:tree-insert tree element)
+             (push element outstanding-nodes))
+           ;;
+        when (< max (dhs-sequences:content-length tree))
+          do (setq max (dhs-sequences:content-length tree))
+             ;;
+             ;; Verify the final state of the list
+        finally (progn
+                  (check-verifying-rbtree tree)
+                  (format t "max length = ~s~%" max)
+                  (fiveam:is (= (length outstanding-nodes)
+                                (dhs-sequences:content-length tree))))))))
