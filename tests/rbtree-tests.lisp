@@ -189,3 +189,21 @@
                   (format t "max length = ~s~%" max)
                   (fiveam:is (= (length outstanding-nodes)
                                 (dhs-sequences:content-length tree))))))))
+
+(fiveam:test rbtree-large-test
+  (let ((tree (make-instance 'verifying-rbtree :key #'car :test #'< :test-equal #'=))
+        (random (make-instance 'acm-random:acm-random))
+        (total 0))
+    (loop
+      repeat 1000
+      for i from 0
+      for v = (random:next-uint32 random)
+      unless (dhs-sequences:tree-find-node tree v)
+        do (dhs-sequences:tree-insert tree (list v i))
+        and do (incf total))
+    (fiveam:is (= total (dhs-sequences:content-length tree)))
+    (print total)
+    (loop
+      repeat total
+      do (dhs-sequences:tree-delete-node tree (dhs-sequences:tree-first-node tree)))
+    (fiveam:is (zerop (dhs-sequences:content-length tree)))))
