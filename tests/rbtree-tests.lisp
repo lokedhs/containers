@@ -153,7 +153,6 @@
                  node)))
       ;;
       (loop
-        with max = 0
         for i from 0 below 100000
         ;; Simulated forward-flow of time with millisecond precision
         for current-time = 100000 then (+ current-time 1 (/ (1+ (mod (random:next-uint32 random) 500)) 1000))
@@ -176,17 +175,13 @@
            ;;
            ;; Insert the new node
         unless (dhs-sequences:tree-find-node tree trigger-time)
-        do (let ((element (list trigger-time i current-time)))
-             (dhs-sequences:tree-insert tree element)
-             (push element outstanding-nodes))
-           ;;
-        when (< max (dhs-sequences:content-length tree))
-          do (setq max (dhs-sequences:content-length tree))
+          do (let ((element (list trigger-time i current-time)))
+               (dhs-sequences:tree-insert tree element)
+               (push element outstanding-nodes))
              ;;
              ;; Verify the final state of the list
         finally (progn
                   (check-verifying-rbtree tree)
-                  (format t "max length = ~s~%" max)
                   (fiveam:is (= (length outstanding-nodes)
                                 (dhs-sequences:content-length tree))))))))
 
