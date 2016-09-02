@@ -50,9 +50,11 @@
            #:tree-find-element
            #:make-container-iterator
            #:iterator/get-next-element
-           #:container-nth))
+           #:container-nth
+           #:tree))
 
 (defpackage :receptacle.red-black-tree
     (:use :cl :receptacle)
     (:export
-     #:red-black-tree))
+     #:red-black-tree
+     #:tree))

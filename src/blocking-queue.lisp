@@ -52,12 +52,6 @@ access pop an element from an empty sequence."))
   "Create a new instance of a queue."
   (make-instance 'queue))
 
-(defgeneric queue-push (queue element)
-  (:documentation "Push ELEMENT to the tail of QUEUE"))
-
-(defgeneric queue-pop (queue &key if-empty)
-  (:documentation "Pop the element from the head of QUEUE"))
-
 (defmethod queue-push ((queue queue) element)
   (with-slots (content head tail) queue
     (let ((size (array-dimension content 0)))

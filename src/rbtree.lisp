@@ -34,7 +34,7 @@
                 :not-bound)
             (if (slot-value obj 'red) "red" "black"))))
 
-(defclass red-black-tree (container)
+(defclass red-black-tree (receptacle:tree)
   ((root          :type node
                   :accessor red-black-tree/root)
    (empty-node    :type node
@@ -364,12 +364,3 @@
 
 (defmethod receptacle:delete-all ((tree red-black-tree))
   (rb-clear-tree tree))
-
-(defmethod receptacle:make-container-iterator ((container red-black-tree))
-  (receptacle::make-tree-iterator container))
-
-(defmethod receptacle:container-nth ((container red-black-tree) index)
-  (loop
-    for i from 0 to index
-    for current = (receptacle:tree-first-node container) then (receptacle:tree-next container current)
-    finally (return (receptacle:node-element current))))
