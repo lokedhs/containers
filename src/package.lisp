@@ -50,7 +50,7 @@
            #:tree-find-element
            #:make-container-iterator
            #:iterator/get-next-element
-           ))
+           #:container-nth))
 
 (defpackage :dhs-sequences.red-black-tree
     (:use :cl :dhs-sequences)

@@ -367,3 +367,9 @@
 
 (defmethod dhs-sequences:make-container-iterator ((container red-black-tree))
   (dhs-sequences::make-tree-iterator container))
+
+(defmethod dhs-sequences:container-nth ((container red-black-tree) index)
+  (loop
+    for i from 0 to index
+    for current = (dhs-sequences:tree-first-node container) then (dhs-sequences:tree-next container current)
+    finally (return (dhs-sequences:node-element current))))
