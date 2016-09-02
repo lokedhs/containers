@@ -52,6 +52,8 @@
 
 (defpackage :receptacle.red-black-tree
     (:use :cl :receptacle)
-    (:export
-     #:red-black-tree
-     #:tree))
+    (:export #:red-black-tree))
+
+(defpackage :receptacle.flexichain
+    (:use :cl)
+    (:export))

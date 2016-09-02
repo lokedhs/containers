@@ -5,7 +5,8 @@
     :serial t
     :depends-on (:alexandria
                  :bordeaux-threads
-                 :local-time)
+                 :local-time
+                 :flexichain)
     :components ((:module src
                           :serial t
                           :components ((:file "package")
@@ -17,4 +18,5 @@
                                        (:file "blocking-sets")
                                        (:file "atomic")
                                        (:file "tree")
-                                       (:file "rbtree")))))
+                                       (:file "rbtree")
+                                       (:file "flexichain")))))
