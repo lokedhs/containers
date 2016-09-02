@@ -1,4 +1,4 @@
-(defpackage :dhs-sequences
+(defpackage :receptacle
   (:use :cl)
   (:documentation "Container library")
   (:export #:queue-push
@@ -52,7 +52,7 @@
            #:iterator/get-next-element
            #:container-nth))
 
-(defpackage :dhs-sequences.red-black-tree
-    (:use :cl :dhs-sequences)
+(defpackage :receptacle.red-black-tree
+    (:use :cl :receptacle)
     (:export
      #:red-black-tree))

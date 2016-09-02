@@ -1,4 +1,4 @@
-(in-package :dhs-sequences)
+(in-package :receptacle)
 
 (defclass task-queue (lockable-instance)
   ((name         :type string

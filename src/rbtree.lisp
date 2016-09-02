@@ -1,4 +1,4 @@
-(in-package :dhs-sequences.red-black-tree)
+(in-package :receptacle.red-black-tree)
 
 (declaim (optimize (speed 3) (safety 1) (debug 0)))
 
@@ -311,65 +311,65 @@
 ;;;  API implementation
 ;;;
 
-(defmethod dhs-sequences:tree-insert ((tree red-black-tree) element)
+(defmethod receptacle:tree-insert ((tree red-black-tree) element)
   (rb-insert-node tree element))
 
-(defmethod dhs-sequences:tree-find-node ((tree red-black-tree) key)
+(defmethod receptacle:tree-find-node ((tree red-black-tree) key)
   (rb-exact-query tree key))
 
-(defmethod dhs-sequences:tree-find-element ((tree red-black-tree) key)
+(defmethod receptacle:tree-find-element ((tree red-black-tree) key)
   (let ((node (rb-exact-query tree key)))
     (if node
         (node/value node)
         nil)))
 
-(defmethod dhs-sequences:tree-delete-node ((tree red-black-tree) node)
+(defmethod receptacle:tree-delete-node ((tree red-black-tree) node)
   (check-type node node)
   (rb-delete tree node))
 
-(defmethod dhs-sequences:tree-delete-element ((tree red-black-tree) element)
+(defmethod receptacle:tree-delete-element ((tree red-black-tree) element)
   (let ((node (rb-exact-query tree element)))
     (if node
         (rb-delete tree node)
         nil)))
 
-(defmethod dhs-sequences:tree-first-node ((tree red-black-tree))
+(defmethod receptacle:tree-first-node ((tree red-black-tree))
   (let ((node (rb-first-node tree)))
     (if (eq node (red-black-tree/empty-node tree))
         nil
         node)))
 
-(defmethod dhs-sequences:tree-first-element ((tree red-black-tree))
+(defmethod receptacle:tree-first-element ((tree red-black-tree))
   (let ((node (rb-first-node tree)))
     (if (eq node (red-black-tree/empty-node tree))
         nil
         (node/value node))))
 
-(defmethod dhs-sequences:tree-next ((tree red-black-tree) node)
+(defmethod receptacle:tree-next ((tree red-black-tree) node)
   (check-type node node)
   (let ((node (rb-successor tree node)))
     (if (eq node (red-black-tree/empty-node tree))
         nil
         node)))
 
-(defmethod dhs-sequences:node-element ((node node))
+(defmethod receptacle:node-element ((node node))
   (node/value node))
 
-(defmethod dhs-sequences:content-length ((tree red-black-tree))
+(defmethod receptacle:content-length ((tree red-black-tree))
   (let ((e (red-black-tree/empty-node tree)))
     (loop
       for node = (rb-first-node tree) then (rb-successor tree node)
       until (eq node e)
       summing 1)))
 
-(defmethod dhs-sequences:delete-all ((tree red-black-tree))
+(defmethod receptacle:delete-all ((tree red-black-tree))
   (rb-clear-tree tree))
 
-(defmethod dhs-sequences:make-container-iterator ((container red-black-tree))
-  (dhs-sequences::make-tree-iterator container))
+(defmethod receptacle:make-container-iterator ((container red-black-tree))
+  (receptacle::make-tree-iterator container))
 
-(defmethod dhs-sequences:container-nth ((container red-black-tree) index)
+(defmethod receptacle:container-nth ((container red-black-tree) index)
   (loop
     for i from 0 to index
-    for current = (dhs-sequences:tree-first-node container) then (dhs-sequences:tree-next container current)
-    finally (return (dhs-sequences:node-element current))))
+    for current = (receptacle:tree-first-node container) then (receptacle:tree-next container current)
+    finally (return (receptacle:node-element current))))

@@ -1,4 +1,4 @@
-(in-package :dhs-sequences)
+(in-package :receptacle)
 
 (defclass list-queue (generic-sequence)
   ((head :type t

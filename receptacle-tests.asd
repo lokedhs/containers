@@ -1,4 +1,4 @@
-(asdf:defsystem #:containers-tests
+(asdf:defsystem #:receptacle-tests
   :description "Tests for dhs-sequences"
   :author "Elias Martenson <lokedhs@gmail.com>"
   :license "BSD"

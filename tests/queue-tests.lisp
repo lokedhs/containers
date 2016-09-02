@@ -68,12 +68,12 @@
        for i from 0 below n
        do (queue-push q i))
     (fiveam:is (= (content-length q) n))
-    (let ((start-time (dhs-sequences::current-time))
+    (let ((start-time (receptacle::current-time))
           (result nil))
       (loop
          repeat (1+ n)
          do (push (queue-pop-wait q :timeout 0.4) result))
-      (let* ((end-time (dhs-sequences::current-time))
+      (let* ((end-time (receptacle::current-time))
              (delta (- end-time start-time)))
         (check-with-tolerance delta 0.4 0.1)
         (fiveam:is (equal (append (loop for i from 0 below n collect i)

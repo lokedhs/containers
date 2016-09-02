@@ -1,4 +1,4 @@
-(asdf:defsystem #:containers
+(asdf:defsystem #:receptacle
     :description "Container library"
     :author "Elias Martenson <lokedhs@gmail.com>"
     :license "BSD"
