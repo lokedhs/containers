@@ -22,6 +22,13 @@
 traverse this container."))
 
 ;;;
+;;;  Sequence functions
+;;;
+
+(defgeneric container-nth (container index)
+  (:documentation "Returns the element at index INDEX in the container."))
+
+;;;
 ;;;  Tree functions
 ;;;
 
@@ -67,8 +74,7 @@ not be found in the tree."))
 ;;;  Iterator functions
 ;;;
 
-(defgeneric iterator/current-element (iterator)
-  (:documentation "Returns the current element"))
-
 (defgeneric iterator/get-next-element (iterator)
-  (:documentation "Prepares the iterator to return the next element. Returns NIL if the endof the sequence has been reached."))
+  (:documentation "Prepares the iterator to return the next element.
+If the iterator is not at the end of the list, returns the value and NIL.
+If the end of the list was reached, returns NIL and T."))

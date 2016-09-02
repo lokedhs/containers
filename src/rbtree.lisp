@@ -364,3 +364,6 @@
 
 (defmethod dhs-sequences:delete-all ((tree red-black-tree))
   (rb-clear-tree tree))
+
+(defmethod dhs-sequences:make-container-iterator ((container red-black-tree))
+  (dhs-sequences::make-tree-iterator container))
