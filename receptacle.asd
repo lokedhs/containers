@@ -16,6 +16,5 @@
                                        (:file "hash-map")
                                        (:file "blocking-sets")
                                        (:file "atomic")
-                                       (:file "task")
                                        (:file "tree")
                                        (:file "rbtree")))))

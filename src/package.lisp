@@ -20,9 +20,6 @@
            #:hash-get-or-update
            #:blocking-queue
            #:with-disabled-interrupts
-           #:queue-start-workers
-           #:queue-job
-           #:task-queue
            #:with-locked-instance
            #:hash-iterator
            #:hash-remove
