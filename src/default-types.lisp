@@ -98,3 +98,39 @@
            (values (row-major-aref array pos) nil))
           (t
            (values nil t)))))
+
+(defclass random-access-iterator ()
+  ((container :type t
+              :initarg :container
+              :reader random-access-iterator/container)
+   (pos       :type (integer 0)
+              :initform 0
+              :accessor random-access-iterator/pos))
+  (:documentation "Implementation of an iterator that can be used for
+containers which have an O(1) complexity when retrieving elements."))
+
+(defmethod iterator/get-next-element ((iterator random-access-iterator))
+  (let ((container (random-access-iterator/container iterator))
+        (pos (random-access-iterator/pos iterator)))
+    (cond ((< pos (content-length container))
+           (incf (random-access-iterator/pos iterator))
+           (values (container-nth container pos) nil))
+          (t
+           (values nil t)))))
+
+;;;
+;;;  General functions that probably should be somewhere else
+;;;
+
+(defmacro do-container ((sym container) &body body)
+  (alexandria:with-gensyms (i value end-p)
+    `(let ((,i (make-container-iterator ,container)))
+       (loop
+         while (multiple-value-bind (,value ,end-p)
+                   (iterator/get-next-element ,i)
+                 (if ,end-p
+                     nil
+                     (progn
+                       (let ((,sym ,value))
+                         ,@body)
+                       t)))))))

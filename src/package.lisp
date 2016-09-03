@@ -48,7 +48,10 @@
            #:make-container-iterator
            #:iterator/get-next-element
            #:container-nth
-           #:tree))
+           #:tree
+           #:remove-at-position
+           #:insert-at-position
+           #:do-container))
 
 (defpackage :receptacle.red-black-tree
     (:use :cl :receptacle)
