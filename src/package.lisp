@@ -51,7 +51,8 @@
            #:tree
            #:remove-at-position
            #:insert-at-position
-           #:do-container))
+           #:do-container
+           #:sorted-list))
 
 (defpackage :receptacle.red-black-tree
     (:use :cl :receptacle)

@@ -40,6 +40,16 @@ NIL, the index where the object should be if inserted, NIL."
                                  (search-span start mid)))))))))
       (search-span 0 (content-length content)))))
 
+(macrolet ((define-delegate-function (name args)
+             (alexandria:with-gensyms (v)
+               `(defmethod ,name (,v ,@args)
+                  (,name (sorted-list/content ,v) ,@args)))))
+  (define-delegate-function content-length ())
+  (define-delegate-function empty-p ())
+  (define-delegate-function container-nth (index))
+  (define-delegate-function remove-at-position (index))
+  (define-delegate-function delete-all ()))
+
 (defmethod tree-insert ((container sorted-list) element)
   (let ((content (sorted-list/content container)))
     (multiple-value-bind (e index found-p)
