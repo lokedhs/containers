@@ -134,3 +134,17 @@ containers which have an O(1) complexity when retrieving elements."))
                        (let ((,sym ,value))
                          ,@body)
                        t)))))))
+
+(defclass test-fn-mixin ()
+  ((test-equal-fn :type function
+                  :initform #'string=
+                  :initarg :test-equal
+                  :reader test-fn-mixin/test-equal-fn)
+   (test-fn       :type function
+                  :initform #'string<
+                  :initarg :test
+                  :reader test-fn-mixin/test-fn)
+   (key-fn        :type function
+                  :initform #'identity
+                  :initarg :key
+                  :reader test-fn-mixin/key-fn)))

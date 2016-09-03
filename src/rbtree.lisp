@@ -34,23 +34,11 @@
                 :not-bound)
             (if (slot-value obj 'red) "red" "black"))))
 
-(defclass red-black-tree (receptacle:tree)
+(defclass red-black-tree (receptacle:tree test-fn-mixin)
   ((root          :type node
                   :accessor red-black-tree/root)
    (empty-node    :type node
-                  :reader red-black-tree/empty-node)
-   (test-equal-fn :type function
-                  :initform #'string=
-                  :initarg :test-equal
-                  :reader red-black-tree/test-equal-fn)
-   (test-fn       :type function
-                  :initform #'string<
-                  :initarg :test
-                  :reader red-black-tree/test-fn)
-   (key-fn        :type function
-                  :initform #'identity
-                  :initarg :key
-                  :reader red-black-tree/key-fn)))
+                  :reader red-black-tree/empty-node)))
 
 (defun rb-clear-tree (obj)
   (let ((e (make-instance 'node :red nil)))
@@ -103,8 +91,8 @@
   (let ((e (red-black-tree/empty-node tree)))
     (setf (node/left z) e)
     (setf (node/right z) e)
-    (let ((test-fn (red-black-tree/test-fn tree))
-          (key-fn (red-black-tree/key-fn tree))
+    (let ((test-fn (receptacle::test-fn-mixin/test-fn tree))
+          (key-fn (receptacle::test-fn-mixin/key-fn tree))
           (y (red-black-tree/root tree)))
       (declare (type function test-fn key-fn))
       (loop
@@ -189,9 +177,9 @@
 (defun rb-exact-query (tree key)
   (let ((e (red-black-tree/empty-node tree))
         (x (node/left (red-black-tree/root tree)))
-        (test-fn (red-black-tree/test-fn tree))
-        (test-equal-fn (red-black-tree/test-equal-fn tree))
-        (key-fn (red-black-tree/key-fn tree)))
+        (test-fn (receptacle::test-fn-mixin/test-fn tree))
+        (test-equal-fn (receptacle::test-fn-mixin/test-equal-fn tree))
+        (key-fn (receptacle::test-fn-mixin/key-fn tree)))
     (declare (type function test-fn test-equal-fn key-fn))
     (if (eq x e)
         nil
