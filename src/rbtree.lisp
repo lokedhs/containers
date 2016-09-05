@@ -34,7 +34,7 @@
                 :not-bound)
             (if (slot-value obj 'red) "red" "black"))))
 
-(defclass red-black-tree (receptacle:tree test-fn-mixin)
+(defclass red-black-tree (receptacle:tree receptacle::test-fn-mixin)
   ((root          :type node
                   :accessor red-black-tree/root)
    (empty-node    :type node
