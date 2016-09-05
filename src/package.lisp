@@ -52,7 +52,9 @@
            #:remove-at-position
            #:insert-at-position
            #:do-container
-           #:sorted-list))
+           #:sorted-list
+           #:sorted-list-bsearch
+           #:sorted-list-insert))
 
 (defpackage :receptacle.red-black-tree
     (:use :cl :receptacle)

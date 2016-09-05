@@ -7,6 +7,17 @@
             :initform (error "~s required when creating ~s" :content 'sorted-list)
             :reader sorted-list/content)))
 
+(defgeneric sorted-list-insert (container element)
+  (:documentation "Inserts ELEMENT into CONTAINER. The function
+returns two values: The index where the element was inserted and a
+boolean value which is set to T if a new value was inserted or NIL if
+an old value was overwritten."))
+
+(defgeneric sorted-list-delete-element (container key)
+  (:documentation "Removes element indicated by KEY from CONTAINER.
+Returns the index of the removed element, or NIL if the element did
+not exist in the lst."))
+
 (defmethod print-object ((obj sorted-list) stream)
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~s" (if (slot-boundp obj 'content)
@@ -51,20 +62,32 @@ NIL, the index where the object should be if inserted, NIL."
   (define-delegate-function delete-all ()))
 
 (defmethod tree-insert ((container sorted-list) element)
+  (sorted-list-insert container element))
+
+(defmethod sorted-list-insert ((container sorted-list) element)
   (let ((content (sorted-list/content container)))
     (multiple-value-bind (e index found-p)
         (sorted-list-bsearch container (funcall (test-fn-mixin/key-fn container) element))
       (declare (ignore e))
-      (if found-p
-          (setf (container-nth content index) element)
-          (insert-at-position content index element)))))
+      (cond (found-p
+             (setf (container-nth content index) element)
+             (values index t))
+            (t
+             (insert-at-position content index element)
+             (values index nil))))))
 
 (defmethod tree-delete-element ((container sorted-list) key)
+  (sorted-list-delete-element container key))
+
+(defmethod sorted-list-delete-element ((container sorted-list) key)
   (multiple-value-bind (e index found-p)
       (sorted-list-bsearch container key)
     (declare (ignore e))
-    (when found-p
-      (remove-at-position (sorted-list/content container) index))))
+    (cond (found-p
+           (remove-at-position (sorted-list/content container) index)
+           index)
+          (t
+           nil))))
 
 (defmethod make-container-iterator ((container sorted-list))
   (make-container-iterator (sorted-list/content container)))
